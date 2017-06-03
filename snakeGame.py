@@ -8,6 +8,7 @@ def gameOver():
     game_over_rectangle = game_over_surface.get_rect()
     game_over_rectangle.midtop = (400, 15)  #(x, y)
     play_surface.blit(game_over_surface, game_over_rectangle)
+    showScore(True)
     pygame.display.flip()
     time.sleep(5)
     pygame.quit()   # pygame exit
@@ -16,6 +17,20 @@ def gameOver():
 def getSnakeFoodRandomPosition():
     # 10 multiplier equals to one snake step; important to catch food
     return [random.randrange(1, 80) * 10, random.randrange(1, 60) * 10]
+
+def showScore(end_game_score = False):
+    if end_game_score:
+        score_font = pygame.font.SysFont('monaco', 48)
+        score_surface = score_font.render('Your final score: {0}'.format(score), True, black)
+    else:
+        score_font = pygame.font.SysFont('monaco', 32)
+        score_surface = score_font.render('Score: {0}'.format(score), True, black)
+    score_rectangle = score_surface.get_rect()
+    if end_game_score:
+        score_rectangle.midtop = (400, 120)  #(x, y)
+    else:
+        score_rectangle.midtop = (80, 10)  #(x, y)
+    play_surface.blit(score_surface, score_rectangle)
 
 # check for initializing errors
 check_errors = pygame.init()
@@ -29,7 +44,6 @@ else:
 red = pygame.Color(255, 0, 0)   # RGB colors; Gameover
 green = pygame.Color(0, 150, 0) # snake
 black = pygame.Color(0, 0, 0)   # score
-# white = pygame.Color(255, 255, 255) # background
 brown = pygame.Color(165, 42, 42)   # snake food
 grey = pygame.Color(210, 210, 210)  # background
 
@@ -42,6 +56,7 @@ pygame.display.flip()
 # FPS (frames-per-second) controller
 fps_controller = pygame.time.Clock()
 
+# variables
 snake_pos = [100, 50]   # x and y of snake head = first block
 snake_body = [[100, 50], [90, 50], [80, 50]]    # snake body at the beginning
 
@@ -50,6 +65,8 @@ food_spawn = True
 
 direction = 'RIGHT'
 change_to = direction
+
+score = 0
 
 # Main logic of the game
 while True:
@@ -67,7 +84,7 @@ while True:
             if event.key == pygame.K_DOWN or event.key == ord('s'):
                 change_to = 'DOWN'
             if event.key == pygame.K_ESCAPE:
-                pygame.event.post(pygame.event.Event(QUIT))
+                pygame.event.post(pygame.event.Event(pygame.QUIT))
 
     # validation of direction
     if change_to == 'RIGHT' and not direction == 'LEFT':
@@ -93,6 +110,7 @@ while True:
     snake_body.insert(0, list(snake_pos))
     if snake_pos[0] == food_pos[0] and snake_pos[1] == food_pos[1]:
         food_spawn = False
+        score += 1
     else:
         snake_body.pop()
 
@@ -115,5 +133,14 @@ while True:
         if snake_pos[0] == body_block[0] and snake_pos[1] == body_block[1]:
             gameOver()
 
+    showScore()
     pygame.display.flip()
-    fps_controller.tick(22) # 25 frames per second
+    fps_controller.tick(22) # 22 frames per second
+
+    # TODO:
+    # add menu
+    # add sounds
+    # change speed according to score (or difficulty level)
+    # add settings
+    # try to add image
+    # change window icon
