@@ -25,17 +25,19 @@ if check_errors[1] > 0:
 else:
     print("PyGame successfully initialized!")
 
+# Colors
+red = pygame.Color(255, 0, 0)   # RGB colors; Gameover
+green = pygame.Color(0, 150, 0) # snake
+black = pygame.Color(0, 0, 0)   # score
+# white = pygame.Color(255, 255, 255) # background
+brown = pygame.Color(165, 42, 42)   # snake food
+grey = pygame.Color(210, 210, 210)  # background
+
 # Play surface
 resolution = (800, 600) # (x, y)
 play_surface = pygame.display.set_mode(resolution)
 pygame.display.set_caption('Snake game!')
-
-# Colors
-red = pygame.Color(255, 0, 0)   # RGB colors; Gameover
-green = pygame.Color(0, 255, 0) # snake
-black = pygame.Color(0, 0, 0)   # score
-white = pygame.Color(255, 255, 255) # background
-brown = pygame.Color(165, 42, 42)   # snake food
+pygame.display.flip()
 
 # FPS (frames-per-second) controller
 fps_controller = pygame.time.Clock()
@@ -50,7 +52,7 @@ direction = 'RIGHT'
 change_to = direction
 
 # Main logic of the game
-while 1:
+while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
@@ -89,11 +91,29 @@ while 1:
 
     # Snake body mechanism
     snake_body.insert(0, list(snake_pos))
-    if snake_pos[0] == food_pos[1] and snake_pos[1] == food_pos[1]:
+    if snake_pos[0] == food_pos[0] and snake_pos[1] == food_pos[1]:
         food_spawn = False
     else:
         snake_body.pop()
 
-    if !food_spawn:
+    if not food_spawn:
         food_pos = getSnakeFoodRandomPosition()
         food_spawn = True
+
+    play_surface.fill(grey)    # draws clean surface
+
+    for pos in snake_body:
+        pygame.draw.rect(play_surface, green, pygame.Rect(pos[0], pos[1], 10, 10))
+
+    pygame.draw.rect(play_surface, brown, pygame.Rect(food_pos[0], food_pos[1], 10, 10))
+
+    if snake_pos[0] > (resolution[0] - 10) or snake_pos[0] < 0 or \
+        snake_pos[1] > (resolution[1] - 10) or snake_pos[1] < 0:
+        gameOver()
+
+    for body_block in snake_body[1:]:
+        if snake_pos[0] == body_block[0] and snake_pos[1] == body_block[1]:
+            gameOver()
+
+    pygame.display.flip()
+    fps_controller.tick(22) # 25 frames per second
