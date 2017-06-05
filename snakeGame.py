@@ -1,6 +1,6 @@
 # Snake Game!
 
-import pygame, sys, random, time
+import pygame, sys, random, time, os
 
 def gameOver():
     my_font = pygame.font.SysFont('monaco', 72)
@@ -39,6 +39,10 @@ if check_errors[1] > 0:
     sys.exit(-1)
 else:
     print("PyGame successfully initialized!")
+
+# set window icon
+game_icon = pygame.image.load(os.path.join('images', 'snake_icon.jpg'))
+pygame.display.set_icon(game_icon)
 
 # Colors
 red = pygame.Color(255, 0, 0)   # RGB colors; Gameover
@@ -143,4 +147,3 @@ while True:
     # change speed according to score (or difficulty level)
     # add settings
     # try to add image
-    # change window icon
